@@ -9,11 +9,14 @@ import Country from './Country.vue';
       <div class="col-4" >
         <input type="text" v-model="searchTerm" placeholder="Search country...">
       </div>
+      <div class="col-4" >
+        <button @click="sortAscending">Sort Ascending</button>
+        <button @click="sortDescending">Sort Descending</button>
+      </div>
+      <div class="col-4" ></div>
     </div>
 
     <div class="row justify-content-center">
-
-      
 
       <div v-if="filteredCountries">
         <div v-for="(country, index) in filteredCountries" :key="index">
@@ -48,13 +51,30 @@ export default {
       searchTerm: ''
     };
   },
+  methods: {
+    sortAscending() {
+      if (!this.filteredData) return;
+      this.filteredData.sort((a, b) => a.name.localeCompare(b.name));
+    },
+    sortDescending() {
+      if (!this.filteredData) return;
+      this.filteredData.sort((a, b) => b.name.localeCompare(a.name));
+    }
+  },
   computed: {
     // Computed property to filter the country list based on the search term
     filteredCountries() {
-      if (!this.searchTerm) return this.filteredData;
-      return this.filteredData.filter(country =>
-        country.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
+      let data = this.filteredData;
+      if (!data) return [];
+
+      // Filter based on search term
+      if (this.searchTerm) {
+        data = data.filter(country =>
+          country.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        );
+      }
+
+      return data;
     }
   },
   mounted() {
