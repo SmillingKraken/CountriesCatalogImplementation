@@ -39,6 +39,11 @@ import Country from './Country.vue';
       </div>
     </div>
   </div>
+  <div class="pagination">
+    <button @click="prevPage" :disabled="currentPage <= 1">Previous</button>
+    <span>Page {{ currentPage }}</span>
+    <button @click="nextPage" :disabled="currentPage * rowsPerPage >= filteredCountriesLength">Next</button>
+  </div>
 </template>
 
 <script>
@@ -48,7 +53,9 @@ export default {
   data() {
     return {
       filteredData: null,
-      searchTerm: ''
+      searchTerm: '',
+      currentPage: 1,
+      rowsPerPage: 25
     };
   },
   methods: {
@@ -59,6 +66,14 @@ export default {
     sortDescending() {
       if (!this.filteredData) return;
       this.filteredData.sort((a, b) => b.name.localeCompare(a.name));
+    },
+    nextPage() {
+      if (this.currentPage * this.rowsPerPage < this.totalFilteredCountries) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) this.currentPage--;
     }
   },
   computed: {
@@ -74,7 +89,21 @@ export default {
         );
       }
 
-      return data;
+      const start = (this.currentPage - 1) * this.rowsPerPage;
+      const end = start + this.rowsPerPage;
+      return data.slice(start, end);
+    },
+    totalFilteredCountries() {
+      let data = this.filteredData;
+      if (!data) return 0;
+
+      if (this.searchTerm) {
+        data = data.filter(country =>
+          country.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        );
+      }
+
+      return data.length;
     }
   },
   mounted() {
