@@ -4,9 +4,19 @@ import Country from './Country.vue';
 
 <template>
   <div class="container m-5 ">
+
+    <div class="row">
+      <div class="col-4" >
+        <input type="text" v-model="searchTerm" placeholder="Search country...">
+      </div>
+    </div>
+
     <div class="row justify-content-center">
-      <div v-if="filteredData">
-        <div v-for="(country, index) in filteredData" :key="index">
+
+      
+
+      <div v-if="filteredCountries">
+        <div v-for="(country, index) in filteredCountries" :key="index">
           <Country :flagUrl="country.flag"
           :nativeNames="country.nativeNames">
             <h2>Country Name: {{ country.name }}</h2>
@@ -35,7 +45,17 @@ export default {
   data() {
     return {
       filteredData: null,
+      searchTerm: ''
     };
+  },
+  computed: {
+    // Computed property to filter the country list based on the search term
+    filteredCountries() {
+      if (!this.searchTerm) return this.filteredData;
+      return this.filteredData.filter(country =>
+        country.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
   },
   mounted() {
     axios.get('https://restcountries.com/v3.1/all')
