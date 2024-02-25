@@ -1,26 +1,29 @@
 <script setup>
+import { ref } from 'vue';
 import Countries from './components/Countries.vue';
-import ProjectTittle from './components/ProjectTittle.vue';
+import ProjectTitle from './components/ProjectTitle.vue';
+
+const searchTerm = ref('');
+
+const handleSearch = (term) => {
+  searchTerm.value = term;
+};
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-      <ProjectTittle msg="Countries Catalog Implementation" />
-    </div>
+    <ProjectTitle 
+      title="Countries Catalog Implementation" 
+      @update:search="handleSearch"
+    />
   </header>
 
   <main>
-    <Countries/>
+    <Countries 
+      ref="countriesComponent"
+      :searchTerm="searchTerm" 
+    />
   </main>
 </template>
 
-<style scoped>
-
-  .wrapper {
-      display: flex;
-      justify-content: center; 
-      align-items: center;     
-    }
-
-</style>
+<script>

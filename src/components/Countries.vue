@@ -1,21 +1,14 @@
 <script setup>
+import { defineProps } from 'vue';
 import Country from './Country.vue';
+defineProps({
+  searchTerm: String
+});
+
 </script>
 
 <template>
   <div class="container m-5 ">
-
-    <div class="row">
-      <div class="col-4" >
-        <input type="text" v-model="searchTerm" placeholder="Search country...">
-      </div>
-      <div class="col-4" >
-        <button @click="sortAscending">Sort Ascending</button>
-        <button @click="sortDescending">Sort Descending</button>
-      </div>
-      <div class="col-4" ></div>
-    </div>
-
     <div class="row justify-content-center">
 
       <div v-if="filteredCountries">
@@ -53,7 +46,6 @@ export default {
   data() {
     return {
       filteredData: null,
-      searchTerm: '',
       currentPage: 1,
       rowsPerPage: 25
     };
