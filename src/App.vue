@@ -1,13 +1,27 @@
 <script setup>
-import { ref } from 'vue';
-import Countries from './components/Countries.vue';
-import ProjectTitle from './components/ProjectTitle.vue';
+  import { ref } from 'vue';
+  import Countries from './components/Countries.vue';
+  import ProjectTitle from './components/ProjectTitle.vue';
 
-const searchTerm = ref('');
+  const countriesComponent = ref(null);
+  const searchTerm = ref('');
 
-const handleSearch = (term) => {
-  searchTerm.value = term;
-};
+  const handleSearch = (term) => {
+    searchTerm.value = term;
+  };
+
+  const sortAscending = () => {
+    if (countriesComponent.value) {
+      console.log(countriesComponent.value)
+      countriesComponent.value.sortAscending();
+    } 
+  };
+
+  const sortDescending = () => {
+    if (countriesComponent.value) {
+      countriesComponent.value.sortDescending();
+    }
+  };
 </script>
 
 <template>
@@ -15,6 +29,8 @@ const handleSearch = (term) => {
     <ProjectTitle 
       title="Countries Catalog Implementation" 
       @update:search="handleSearch"
+      @sort-ascending="sortAscending"
+      @sort-descending="sortDescending"
     />
   </header>
 
@@ -25,5 +41,3 @@ const handleSearch = (term) => {
     />
   </main>
 </template>
-
-<script>

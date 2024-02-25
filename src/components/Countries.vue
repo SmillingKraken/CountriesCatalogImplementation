@@ -1,53 +1,65 @@
 <script setup>
-import { defineProps } from 'vue';
-import Country from './Country.vue';
-defineProps({
-  searchTerm: String
-});
-
+  import { defineProps } from "vue";
+  import Country from "./Country.vue";
+  defineProps({
+    searchTerm: String,
+  });
 </script>
 
 <template>
-  <div class="container m-5 ">
-    <div class="row justify-content-center">
-
-      <div v-if="filteredCountries">
-        <div v-for="(country, index) in filteredCountries" :key="index">
-          <Country :flagUrl="country.flag"
-          :nativeNames="country.nativeNames">
-            <h2>Country Name: {{ country.name }}</h2>
-            <h2>2 Character Country Code: {{ country.cca2 }}</h2>
-            <h2>3 Character Country Code:: {{ country.cca3 }}</h2>
-            <div v-if="nativeNames">
-              <div v-for="(nName, index) in nativeNames" :key="index"> 
-                <h2>Native Name: {{ nName.languageCode }}</h2>
-                <h2>Native Name Official: {{ nName.official }}</h2>
-                <h2>Native Name Common: {{ nName.common }}</h2>
-              </div>
-            </div>
-            <h2>Alternative Country Name: {{ country.name }}</h2>
-            <h2>Country Calling Code: {{ country.name }}</h2>
-          </Country>
-        </div>
-      </div>
-    </div>
+  <div class="container m-5">
+    <v-row justify="center" class="py-5">
+      <v-col
+        v-for="(country, index) in filteredCountries"
+        :key="index"
+        cols="12"
+        sm="6"
+        md="4"
+      >
+        <Country
+          :flagUrl="country.flag"
+          :nativeNames="country.nativeNames"
+          :countryName="country.name"
+          :cca2="country.cca2"
+          :cca3="country.cca3"
+          :altSpellings="country.altSpellings"
+          :idd="country.idd ?? 'no idd'"
+        >
+        </Country>
+      </v-col>
+    </v-row>
   </div>
   <div class="pagination">
-    <button @click="prevPage" :disabled="currentPage <= 1">Previous</button>
+    <v-btn variant="outlined" @click="prevPage" :disabled="currentPage <= 1">
+      Previous
+    </v-btn>
+
     <span>Page {{ currentPage }}</span>
-    <button @click="nextPage" :disabled="currentPage * rowsPerPage >= filteredCountriesLength">Next</button>
+
+    <v-btn variant="outlined" @click="nextPage" :disabled="currentPage >= totalPages">
+      Next
+    </v-btn>
   </div>
 </template>
 
+<style>
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+</style>
+
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
       filteredData: null,
       currentPage: 1,
-      rowsPerPage: 25
+      rowsPerPage: 25,
     };
   },
   methods: {
@@ -66,7 +78,7 @@ export default {
     },
     prevPage() {
       if (this.currentPage > 1) this.currentPage--;
-    }
+    },
   },
   computed: {
     // Computed property to filter the country list based on the search term
@@ -76,7 +88,7 @@ export default {
 
       // Filter based on search term
       if (this.searchTerm) {
-        data = data.filter(country =>
+        data = data.filter((country) =>
           country.name.toLowerCase().includes(this.searchTerm.toLowerCase())
         );
       }
@@ -90,38 +102,47 @@ export default {
       if (!data) return 0;
 
       if (this.searchTerm) {
-        data = data.filter(country =>
+        data = data.filter((country) =>
           country.name.toLowerCase().includes(this.searchTerm.toLowerCase())
         );
       }
 
       return data.length;
-    }
+    },
+    totalPages() {
+      return Math.ceil(this.filteredCountriesLength / this.rowsPerPage);
+    },
   },
   mounted() {
-    axios.get('https://restcountries.com/v3.1/all')
-      .then(response => {
-        const countries = response.data.map(country => {
+    axios
+      .get("https://restcountries.com/v3.1/all")
+      .then((response) => {
+        const countries = response.data.map((country) => {
           return {
             flag: country.flags.png,
             name: country.name.official,
             cca2: country.cca2,
             cca3: country.cca3,
-            nativeNames: country.name.nativeName ? Object.keys(country.name.nativeName).map(key => {
-              return {
-                languageCode: key,
-                official: country.name.nativeName[key].official,
-                common: country.name.nativeName[key].common
-              };
-            }) : "this country have no native name",
-            altSpellings: country.altSpellings,
-            idd: country.idd
+            nativeNames: country.name.nativeName
+              ? Object.keys(country.name.nativeName).map((key) => {
+                  return {
+                    languageCode: key,
+                    official: country.name.nativeName[key].official,
+                    common: country.name.nativeName[key].common,
+                  };
+                })
+              : "this country have no native name",
+            altSpellings: country.altSpellings
+              ? Object.keys(country.altSpellings).map((key) => {
+                  return { altName: country.altSpellings[key] };
+                })
+              : "no eng altSpelling",
+              idd: country.idd?.suffixes?.[0] ?? "no idd",
           };
         });
         this.filteredData = countries;
-        console.log(countries); 
       })
-      .catch(error => console.error('Error:', error));
-  }
+      .catch((error) => console.error("Error:", error));
+  },
 };
 </script>

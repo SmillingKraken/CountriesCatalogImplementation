@@ -18,7 +18,6 @@ const toggleCard = () => {
 
 <template>
   <v-toolbar density="compact">
-    <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
     <v-toolbar-title>{{ title }}</v-toolbar-title>
 
