@@ -1,29 +1,3 @@
-<script setup>
-  import { ref } from 'vue';
-  import Countries from './components/Countries.vue';
-  import ProjectTitle from './components/ProjectTitle.vue';
-
-  const countriesComponent = ref(null);
-  const searchTerm = ref('');
-
-  const handleSearch = (term) => {
-    searchTerm.value = term;
-  };
-
-  const sortAscending = () => {
-    if (countriesComponent.value) {
-      console.log(countriesComponent.value)
-      countriesComponent.value.sortAscending();
-    } 
-  };
-
-  const sortDescending = () => {
-    if (countriesComponent.value) {
-      countriesComponent.value.sortDescending();
-    }
-  };
-</script>
-
 <template>
   <header>
     <ProjectTitle 
@@ -33,11 +7,37 @@
       @sort-descending="sortDescending"
     />
   </header>
-
-  <main>
-    <Countries 
-      ref="countriesComponent"
-      :searchTerm="searchTerm" 
-    />
-  </main>
+  <Countries 
+    ref="countries"
+    :searchTerm="searchTerm" 
+  />
 </template>
+
+<script>
+  import Countries from './components/Countries.vue';
+  import ProjectTitle from './components/ProjectTitle.vue';
+
+  export default {
+    components: {
+      ProjectTitle,
+      Countries
+    },
+    data () {
+      return {
+        searchTerm: ''
+      }
+    },
+    methods: {
+        handleSearch (term) {
+          this.searchTerm =  term
+        },
+        sortAscending () {
+          this.$refs.countries.sortAscending()
+        },
+        sortDescending() {
+          this.$refs.countries.sortDescending()
+        }
+    }
+  }
+</script>
+

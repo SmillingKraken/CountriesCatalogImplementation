@@ -1,11 +1,3 @@
-<script setup>
-  import { defineProps } from "vue";
-  import Country from "./Country.vue";
-  defineProps({
-    searchTerm: String,
-  });
-</script>
-
 <template>
   <div class="container m-5">
     <v-row justify="center" class="py-5">
@@ -53,8 +45,15 @@
 
 <script>
 import axios from "axios";
+import Country from "./Country.vue";
 
 export default {
+  components: {
+    Country
+  },
+  props: {
+    searchTerm: String
+  },
   data() {
     return {
       filteredData: null,
@@ -81,12 +80,10 @@ export default {
     },
   },
   computed: {
-    // Computed property to filter the country list based on the search term
     filteredCountries() {
       let data = this.filteredData;
       if (!data) return [];
 
-      // Filter based on search term
       if (this.searchTerm) {
         data = data.filter((country) =>
           country.name.toLowerCase().includes(this.searchTerm.toLowerCase())
